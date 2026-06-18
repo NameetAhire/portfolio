@@ -361,6 +361,76 @@ export default function NeuralNetwork() {
       let targetRotX = 0.0;
       let hoveredHubId: string | null = null;
 
+      // Touch pinch zoom and rotation variables
+      let isPinching = false;
+      let initialDistance = 0;
+      let initialZoom = 1.0;
+
+      const onTouchStart = (e: TouchEvent) => {
+        const rect = canvas.getBoundingClientRect();
+        if (e.touches.length === 1) {
+          isDragging = true;
+          isPinching = false;
+          prevMouseX = e.touches[0].clientX;
+          prevMouseY = e.touches[0].clientY;
+          
+          // Update mouse position for raycasting on tap
+          mouse.x = ((e.touches[0].clientX - rect.left) / rect.width) * 2 - 1;
+          mouse.y = -((e.touches[0].clientY - rect.top) / rect.height) * 2 + 1;
+        } else if (e.touches.length === 2) {
+          isDragging = false;
+          isPinching = true;
+          initialDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          initialZoom = stateRef.current.baseZoom;
+        }
+      };
+
+      const onTouchMove = (e: TouchEvent) => {
+        const rect = canvas.getBoundingClientRect();
+
+        if (e.touches.length === 1 && isDragging) {
+          // Prevent screen scrolling when dragging to rotate the galaxy
+          if (e.cancelable) e.preventDefault();
+          const touch = e.touches[0];
+          mouse.x = ((touch.clientX - rect.left) / rect.width) * 2 - 1;
+          mouse.y = -((touch.clientY - rect.top) / rect.height) * 2 + 1;
+
+          const deltaX = touch.clientX - prevMouseX;
+          const deltaY = touch.clientY - prevMouseY;
+          targetRotY += deltaX * 0.005;
+          targetRotX += deltaY * 0.005;
+          targetRotX = Math.max(-Math.PI / 4, Math.min(Math.PI / 4, targetRotX));
+          prevMouseX = touch.clientX;
+          prevMouseY = touch.clientY;
+        } else if (e.touches.length === 2 && isPinching) {
+          // Prevent browser pinch zoom
+          if (e.cancelable) e.preventDefault();
+          const currentDistance = Math.hypot(
+            e.touches[0].clientX - e.touches[1].clientX,
+            e.touches[0].clientY - e.touches[1].clientY
+          );
+          if (initialDistance > 0) {
+            const zoomRatio = initialDistance / currentDistance;
+            let currentZoom = Math.max(0.4, Math.min(2.5, initialZoom * zoomRatio));
+            
+            if (stateRef.current.activeCategory && currentZoom > 1.3) {
+              triggerReset();
+              isPinching = false;
+            } else {
+              stateRef.current.baseZoom = currentZoom;
+            }
+          }
+        }
+      };
+
+      const onTouchEnd = () => {
+        isDragging = false;
+        isPinching = false;
+      };
+
       const clock = new THREE.Clock();
 
       // Camera targets
@@ -487,6 +557,10 @@ export default function NeuralNetwork() {
       canvas.addEventListener('wheel', onWheel, { passive: false });
       canvas.addEventListener('click', onClick);
       window.addEventListener('keydown', onKeyDown);
+
+      canvas.addEventListener('touchstart', onTouchStart, { passive: false });
+      canvas.addEventListener('touchmove', onTouchMove, { passive: false });
+      canvas.addEventListener('touchend', onTouchEnd, { passive: true });
 
       // ── Animation loop ──
       const loop = () => {
@@ -643,6 +717,10 @@ export default function NeuralNetwork() {
         canvas.removeEventListener('wheel', onWheel);
         canvas.removeEventListener('click', onClick);
         window.removeEventListener('keydown', onKeyDown);
+
+        canvas.removeEventListener('touchstart', onTouchStart);
+        canvas.removeEventListener('touchmove', onTouchMove);
+        canvas.removeEventListener('touchend', onTouchEnd);
 
         renderer.dispose();
         starGeo.dispose();

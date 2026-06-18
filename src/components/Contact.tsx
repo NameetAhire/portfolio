@@ -41,16 +41,28 @@ export default function Contact() {
   const formRef = useRef<HTMLFormElement>(null);
   const successRef = useRef<HTMLDivElement>(null);
 
-  const [formData, setFormData] = useState({ name: '', email: '', message: '' });
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '',
+    company: '',
+    subject: 'Job Opportunity',
+    customSubject: '',
+    message: ''
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
+  const [isSimulated, setIsSimulated] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const web3formsKey = import.meta.env.VITE_WEB3FORMS_ACCESS_KEY;
+  const formspreeId = import.meta.env.VITE_FORMSPREE_FORM_ID;
+  const isDemoMode = !web3formsKey && !formspreeId;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -60,11 +72,16 @@ export default function Contact() {
       return;
     }
 
+    if (formData.subject === 'Other' && !formData.customSubject.trim()) {
+      setError('Please specify your custom subject.');
+      return;
+    }
+
     setIsSubmitting(true);
 
-    // Mock API call
-    setTimeout(() => {
+    const triggerSuccessAnimation = (simulated: boolean) => {
       setIsSubmitting(false);
+      setIsSimulated(simulated);
 
       // AnimeJS transition animation to success screen
       if (formRef.current && successRef.current) {
@@ -88,7 +105,74 @@ export default function Contact() {
           }
         });
       }
-    }, 1500);
+    };
+
+    if (isDemoMode) {
+      // Mock API call in demo mode
+      setTimeout(() => {
+        triggerSuccessAnimation(true);
+      }, 1500);
+      return;
+    }
+
+    const finalSubject = formData.subject === 'Other' 
+      ? formData.customSubject 
+      : formData.subject;
+
+    try {
+      if (web3formsKey) {
+        // Web3Forms submission
+        const response = await fetch('https://api.web3forms.com/submit', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            access_key: web3formsKey,
+            name: formData.name,
+            email: formData.email,
+            company: formData.company || 'N/A',
+            message: formData.message,
+            subject: `[Portfolio] ${finalSubject} - ${formData.name}`,
+            from_name: 'Nameet Portfolio',
+          }),
+        });
+
+        const data = await response.json();
+        if (data.success) {
+          triggerSuccessAnimation(false);
+        } else {
+          throw new Error(data.message || 'Routing rejected by Web3Forms.');
+        }
+      } else if (formspreeId) {
+        // Formspree submission
+        const response = await fetch(`https://formspree.io/f/${formspreeId}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Accept': 'application/json',
+          },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            company: formData.company || 'N/A',
+            subject: finalSubject,
+            message: formData.message,
+          }),
+        });
+
+        if (response.ok) {
+          triggerSuccessAnimation(false);
+        } else {
+          const data = await response.json().catch(() => ({}));
+          throw new Error(data.error || 'Routing failed at Formspree endpoint.');
+        }
+      }
+    } catch (err: any) {
+      setIsSubmitting(false);
+      setError(err?.message || 'Transmission disrupted. Please check your network connection.');
+    }
   };
 
   return (
@@ -100,7 +184,7 @@ export default function Contact() {
         <div style={styles.subtitleLine}></div>
       </div>
 
-      <div style={styles.grid}>
+      <div style={styles.grid} className="grid">
         {/* Info Box */}
         <div style={styles.infoBox} className="glass-panel">
           <h3 style={styles.infoTitle}>Contact Details</h3>
@@ -157,6 +241,14 @@ export default function Contact() {
         <div style={styles.formBox} className="glass-panel">
           {/* Main Form */}
           <form ref={formRef} onSubmit={handleSubmit} style={styles.form}>
+            {isDemoMode && (
+              <div style={styles.noticeBox}>
+                <span style={styles.noticeTitle}>[SYSTEM_NOTICE: DEMO_MODE]</span>
+                <p style={styles.noticeDesc}>
+                  Submissions are currently simulated. To enable real email delivery, configure your <code>VITE_WEB3FORMS_ACCESS_KEY</code> in the <code>.env</code> file.
+                </p>
+              </div>
+            )}
             <div style={styles.inputGroup}>
               <label style={styles.label}>IDENTIFIER (NAME)</label>
               <input 
@@ -182,6 +274,50 @@ export default function Contact() {
                 disabled={isSubmitting}
               />
             </div>
+
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>ORGANIZATION (COMPANY / UNIVERSITY)</label>
+              <input 
+                type="text" 
+                name="company"
+                value={formData.company}
+                onChange={handleChange}
+                placeholder="e.g. SPIT, Mumbai (Optional)"
+                style={styles.input}
+                disabled={isSubmitting}
+              />
+            </div>
+
+            <div style={styles.inputGroup}>
+              <label style={styles.label}>TRANSMISSION_PURPOSE (SUBJECT)</label>
+              <select 
+                name="subject"
+                value={formData.subject}
+                onChange={handleChange}
+                style={styles.select}
+                disabled={isSubmitting}
+              >
+                <option value="Job Opportunity">Job / Career Opportunity</option>
+                <option value="Research Collaboration">Research Collaboration</option>
+                <option value="Freelance / Contract">Freelance / Contract Project</option>
+                <option value="Other">Other / Custom Inquiry</option>
+              </select>
+            </div>
+
+            {formData.subject === 'Other' && (
+              <div style={styles.inputGroup}>
+                <label style={styles.label}>SPECIFY PURPOSE (CUSTOM SUBJECT)</label>
+                <input 
+                  type="text" 
+                  name="customSubject"
+                  value={formData.customSubject}
+                  onChange={handleChange}
+                  placeholder="e.g. Thesis Collaboration Request"
+                  style={styles.input}
+                  disabled={isSubmitting}
+                />
+              </div>
+            )}
 
             <div style={styles.inputGroup}>
               <label style={styles.label}>PAYLOAD (MESSAGE)</label>
@@ -221,11 +357,26 @@ export default function Contact() {
             <CheckCircle2 size={56} color="var(--color-teal)" style={{ marginBottom: '16px' }} />
             <h4 style={styles.successTitle}>TRANSMISSION_COMPLETE</h4>
             <p style={styles.successDesc}>
-              Your message was routed successfully. System response status: **200 OK**.
+              {isSimulated ? (
+                <>
+                  [DEMO_MODE] Your mock transmission completed successfully. Add your access key to <code>.env</code> for real email routing.
+                </>
+              ) : (
+                <>
+                  Your message was routed successfully. System response status: <strong>200 OK</strong>.
+                </>
+              )}
             </p>
             <button 
               onClick={() => {
-                setFormData({ name: '', email: '', message: '' });
+                setFormData({
+                  name: '',
+                  email: '',
+                  company: '',
+                  subject: 'Job Opportunity',
+                  customSubject: '',
+                  message: ''
+                });
                 if (formRef.current) formRef.current.style.display = 'flex';
                 if (successRef.current) successRef.current.style.display = 'none';
                 animate(formRef.current!, {
@@ -347,7 +498,7 @@ const styles = {
   input: {
     padding: '12px 16px',
     borderRadius: '8px',
-    background: 'rgba(0, 0, 0, 0.2)',
+    background: 'var(--bg-surface)',
     border: '1px solid var(--border-glass)',
     color: 'var(--color-text-primary)',
     fontFamily: 'var(--font-sans)',
@@ -355,10 +506,22 @@ const styles = {
     outline: 'none',
     transition: 'var(--transition-fast)',
   },
+  select: {
+    padding: '12px 16px',
+    borderRadius: '8px',
+    background: 'var(--bg-surface)',
+    border: '1px solid var(--border-glass)',
+    color: 'var(--color-text-primary)',
+    fontFamily: 'var(--font-sans)',
+    fontSize: '14.5px',
+    outline: 'none',
+    transition: 'var(--transition-fast)',
+    cursor: 'pointer',
+  },
   textarea: {
     padding: '12px 16px',
     borderRadius: '8px',
-    background: 'rgba(0, 0, 0, 0.2)',
+    background: 'var(--bg-surface)',
     border: '1px solid var(--border-glass)',
     color: 'var(--color-text-primary)',
     fontFamily: 'var(--font-sans)',
@@ -413,7 +576,7 @@ const styles = {
   resetBtn: {
     padding: '10px 20px',
     borderRadius: '30px',
-    background: 'rgba(255, 255, 255, 0.05)',
+    background: 'var(--bg-surface)',
     border: '1px solid var(--border-glass)',
     color: 'var(--color-text-primary)',
     fontFamily: 'var(--font-display)',
@@ -422,6 +585,30 @@ const styles = {
     fontWeight: 600,
     cursor: 'pointer',
     transition: 'var(--transition-fast)',
+  },
+  noticeBox: {
+    padding: '14px 18px',
+    borderRadius: '8px',
+    background: 'rgba(245, 158, 11, 0.05)',
+    border: '1px dashed rgba(245, 158, 11, 0.3)',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    gap: '6px',
+    marginBottom: '10px',
+    textAlign: 'left' as const,
+  },
+  noticeTitle: {
+    fontFamily: 'var(--font-display)',
+    fontSize: '11px',
+    fontWeight: 700,
+    letterSpacing: '0.1em',
+    color: 'var(--color-amber)',
+  },
+  noticeDesc: {
+    fontSize: '12.5px',
+    color: 'var(--color-text-secondary)',
+    lineHeight: 1.45,
+    margin: 0,
   },
 };
 
@@ -439,9 +626,17 @@ if (typeof document !== 'undefined') {
       transform: translateY(-3px);
       box-shadow: 0 0 10px var(--color-cyan-glow);
     }
-    input:focus, textarea:focus {
+    input:focus, textarea:focus, select:focus {
       border-color: var(--color-cyan) !important;
       box-shadow: 0 0 10px rgba(34, 211, 238, 0.15);
+    }
+    [data-theme="dark"] select option {
+      background-color: #0e1017 !important;
+      color: #f0f2ff !important;
+    }
+    [data-theme="light"] select option {
+      background-color: #f0f2ff !important;
+      color: #0f1033 !important;
     }
     .submit-btn:hover {
       box-shadow: 0 4px 20px rgba(34, 211, 238, 0.4), 0 0 10px rgba(192, 132, 252, 0.4);
@@ -454,7 +649,15 @@ if (typeof document !== 'undefined') {
     }
     @media (max-width: 900px) {
       #contact .grid {
-        grid-template-columns: 1fr;
+        grid-template-columns: 1fr !important;
+      }
+      .glass-panel {
+        padding: 20px !important;
+      }
+    }
+    @media (max-width: 500px) {
+      .glass-panel {
+        padding: 16px !important;
       }
     }
   `;

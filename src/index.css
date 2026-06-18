@@ -5,11 +5,11 @@
    =========================== */
 :root,
 [data-theme="dark"] {
-  --bg-deep: #060810;
-  --bg-space: #0c0e1a;
-  --bg-card: rgba(14, 16, 28, 0.75);
-  --bg-card-hover: rgba(22, 25, 45, 0.88);
-  --bg-surface: rgba(18, 20, 36, 0.6);
+  --bg-deep: #05060e;
+  --bg-space: #080a15;
+  --bg-card: rgba(10, 12, 22, 0.4);
+  --bg-card-hover: rgba(18, 21, 38, 0.55);
+  --bg-surface: rgba(255, 255, 255, 0.03);
 
   --color-text-primary: #f0f2ff;
   --color-text-secondary: #8b92b8;
@@ -24,7 +24,7 @@
   --color-amber: #f59e0b;
   --color-amber-glow: rgba(245, 158, 11, 0.3);
 
-  --border-glass: rgba(255, 255, 255, 0.06);
+  --border-glass: rgba(255, 255, 255, 0.14);
   --border-neon: rgba(34, 211, 238, 0.18);
 
   --navbar-bg: rgba(6, 8, 16, 0.75);
@@ -47,11 +47,11 @@
    LIGHT THEME
    =========================== */
 [data-theme="light"] {
-  --bg-deep: #f0f2ff;
-  --bg-space: #e8ebfa;
-  --bg-card: rgba(255, 255, 255, 0.82);
-  --bg-card-hover: rgba(240, 242, 255, 0.95);
-  --bg-surface: rgba(255, 255, 255, 0.65);
+  --bg-deep: #f2f4fc;
+  --bg-space: #e6e9f6;
+  --bg-card: rgba(255, 255, 255, 0.35);
+  --bg-card-hover: rgba(255, 255, 255, 0.55);
+  --bg-surface: rgba(255, 255, 255, 0.6);
 
   --color-text-primary: #0f1033;
   --color-text-secondary: #3d4580;
@@ -66,7 +66,7 @@
   --color-amber: #d97706;
   --color-amber-glow: rgba(217, 119, 6, 0.25);
 
-  --border-glass: rgba(99, 102, 241, 0.12);
+  --border-glass: rgba(255, 255, 255, 0.6);
   --border-neon: rgba(8, 145, 178, 0.2);
 
   --navbar-bg: rgba(240, 242, 255, 0.88);
@@ -102,6 +102,23 @@ body {
   line-height: 1.65;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  transition: var(--transition-theme);
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: 
+    radial-gradient(circle at 15% 20%, var(--color-cyan-glow) 0%, transparent 40%),
+    radial-gradient(circle at 85% 75%, var(--color-purple-glow) 0%, transparent 40%);
+  z-index: 0;
+  pointer-events: none;
+  opacity: 0.8;
   transition: var(--transition-theme);
 }
 
@@ -163,12 +180,34 @@ h1, h2, h3, h4, h5, h6 {
    =========================== */
 .glass-panel {
   background: var(--bg-card);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border-glass);
   border-radius: 16px;
-  box-shadow: var(--shadow-card);
+  box-shadow: var(--shadow-card), inset 0 1px 2px rgba(255, 255, 255, 0.12);
   transition: var(--transition-smooth);
+  position: relative;
+  overflow: hidden;
+}
+
+[data-theme="light"] .glass-panel {
+  box-shadow: var(--shadow-card), inset 0 1px 2px rgba(255, 255, 255, 0.7);
+}
+
+.glass-panel::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 100%);
+  pointer-events: none;
+  z-index: 1;
+}
+
+[data-theme="light"] .glass-panel::before {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, transparent 100%);
 }
 
 .glass-panel:hover {

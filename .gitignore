@@ -22,3 +22,15 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Agent / AI files
+.agent.md
+agent.md
+.agents/
+skills-lock.json
+
+# Local env files
+.env
+.env.local
+.env.*.local
+

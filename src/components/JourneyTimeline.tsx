@@ -275,12 +275,12 @@ export default function JourneyTimeline() {
         style={styles.profileCard} 
         className="glass-panel profile-hud-card"
       >
-        <div style={styles.profileLayout}>
-          <div style={styles.profileInfoCol}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '8px' }}>
+        <div style={styles.profileLayout} className="profile-layout">
+          <div style={styles.profileInfoCol} className="profile-info-col">
+            <div className="profile-title-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '8px' }}>
               <div>
-                <h3 style={{ ...styles.profileName, margin: 0 }}>NAMEET AHIRE</h3>
-                <h4 style={{ ...styles.profileTitle, margin: '4px 0 0 0' }} className="text-gradient-cyan-purple">
+                <h3 style={{ ...styles.profileName, margin: 0 }} className="profile-name">NAMEET AHIRE</h3>
+                <h4 style={{ ...styles.profileTitle, margin: '4px 0 0 0' }} className="text-gradient-cyan-purple profile-title">
                   SYSTEM ARCHITECT & AI RESEARCHER
                 </h4>
               </div>
@@ -319,16 +319,16 @@ export default function JourneyTimeline() {
               </a>
             </div>
 
-            <div style={styles.statsRow}>
-              <div style={styles.statItem}>
+            <div style={styles.statsRow} className="stats-row">
+              <div style={styles.statItem} className="stat-item">
                 <span style={styles.statVal} className="text-gradient-cyan-purple">9.55</span>
                 <span style={styles.statLabel}>M.Tech CGPA</span>
               </div>
-              <div style={styles.statItem}>
+              <div style={styles.statItem} className="stat-item">
                 <span style={styles.statVal} className="text-gradient-purple-teal">8.82</span>
                 <span style={styles.statLabel}>B.E. CGPA</span>
               </div>
-              <div style={styles.statItem}>
+              <div style={styles.statItem} className="stat-item">
                 <span style={styles.statVal} className="text-gradient-cyan-purple">5+</span>
                 <span style={styles.statLabel}>Cloud Badges</span>
               </div>
@@ -338,9 +338,9 @@ export default function JourneyTimeline() {
       </div>
 
       {/* Main Timeline Section */}
-      <div ref={timelineRef} style={styles.timelineContainer}>
+      <div ref={timelineRef} style={styles.timelineContainer} className="timeline-container">
         {/* Glowing timeline track */}
-        <div style={styles.timelineLine}></div>
+        <div style={styles.timelineLine} className="timeline-line"></div>
         
         {timelineData.map((item, index) => {
           const isLeft = index % 2 === 0;
@@ -357,7 +357,7 @@ export default function JourneyTimeline() {
               }}
             >
               {/* Left/Right Card Container */}
-              <div style={styles.cardCol}>
+              <div style={styles.cardCol} className="cardCol">
                 <div 
                   className={`glass-panel timeline-card ${isLeft ? 'left-card' : 'right-card'}`}
                   style={{
@@ -464,7 +464,7 @@ export default function JourneyTimeline() {
               </div>
 
               {/* Central Timeline Node */}
-              <div style={styles.nodeCol}>
+              <div style={styles.nodeCol} className="nodeCol">
                 <div 
                   className="journey-node"
                   style={{
@@ -480,7 +480,7 @@ export default function JourneyTimeline() {
               </div>
 
               {/* Space Filler to keep layout balanced */}
-              <div style={styles.fillerCol}></div>
+              <div style={styles.fillerCol} className="fillerCol"></div>
             </div>
           );
         })}
@@ -903,31 +903,53 @@ if (typeof document !== 'undefined') {
       border-color: var(--color-cyan) !important;
     }
     @media (max-width: 900px) {
-      .profile-layout {
-        flex-direction: column;
-        text-align: center;
+      .profile-hud-card {
+        padding: 20px !important;
+        margin-bottom: 40px !important;
       }
-      .profile-image-container {
-        width: 150px;
-        height: 150px;
+      .profile-layout {
+        flex-direction: column !important;
+        text-align: center !important;
+        gap: 20px !important;
+      }
+      .profile-info-col {
+        width: 100% !important;
+      }
+      .profile-title-row {
+        flex-direction: column !important;
+        align-items: center !important;
+        gap: 12px !important;
+      }
+      .profile-name {
+        font-size: 22px !important;
+      }
+      .profile-title {
+        font-size: 11.5px !important;
       }
       .stats-row {
-        justify-content: center;
+        justify-content: center !important;
+        gap: 16px !important;
+        width: 100% !important;
       }
-      .timeline-container::before {
-        left: 20px;
+      .timeline-container {
+        padding: 0 10px !important;
       }
-      .timeline-item {
+      .timeline-item-container {
         flex-direction: row-reverse !important;
-        margin-bottom: 40px;
+        margin-bottom: 30px !important;
+        gap: 0 !important;
       }
       .cardCol {
-        width: 85% !important;
+        width: calc(100% - 40px) !important;
+      }
+      .timeline-card {
+        padding: 16px !important;
       }
       .nodeCol {
-        width: 15% !important;
-        justify-content: flex-start !important;
-        padding-left: 5px;
+        width: 40px !important;
+        justify-content: center !important;
+        padding-left: 0 !important;
+        flex-shrink: 0 !important;
       }
       .fillerCol {
         display: none !important;
@@ -937,6 +959,27 @@ if (typeof document !== 'undefined') {
       }
       .journey-node {
         transform: scale(0.8) !important;
+      }
+    }
+    @media (max-width: 500px) {
+      .profile-hud-card {
+        padding: 16px !important;
+      }
+      .stats-row {
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        justify-content: space-around !important;
+        gap: 12px !important;
+      }
+      .stat-item {
+        flex: 1 1 30% !important;
+      }
+      .timeline-card {
+        padding: 12px !important;
+      }
+      .timeline-skill-tag {
+        font-size: 9.5px !important;
+        padding: 3px 6px !important;
       }
     }
   `;

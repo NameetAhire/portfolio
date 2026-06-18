@@ -83,7 +83,7 @@ function useTypingEffect(text: string, speed = 60, delay = 0) {
 const diagnosticStrings = [
   'SYSTEM INITIALIZATION: SUCCESSFUL',
   'ESTABLISHING LINK TO SPACE CONSOLE...',
-  'PILOT CREDENTIALS: VALIDATED (NAMEET AHIRE)',
+  'PILOT CREDENTIALS: VALIDATED (NAMEET SUDAM AHIRE)',
   'M.TECH STUDENT DETECTED: SPIT (CGPA 9.55)',
   'AI/ML CORE: YOLO v8 DEEP LEARNING STABLE',
   'CLOUD NETWORKS: AWS CI/CD BADGES INTEGRATED',
@@ -100,7 +100,7 @@ export default function Home() {
   const [logs, setLogs] = useState<string[]>([]);
   const terminalRef = useRef<HTMLDivElement>(null); // the scrollable terminal box
   const logsEndRef = useRef<HTMLDivElement>(null);
-  const titleText = useTypingEffect('NAMEET AHIRE', 80, 300);
+  const titleText = useTypingEffect('NAMEET SUDAM AHIRE', 80, 300);
 
   // Build diagnostic log feed
   useEffect(() => {

@@ -323,7 +323,7 @@ export default function Skills() {
 
       <div style={styles.deckContainer}>
         {/* LED Backlight Customizer Toolbar */}
-        <div style={styles.ledToolbar} className="glass-panel">
+        <div style={styles.ledToolbar} className="glass-panel led-toolbar">
           <div style={styles.ledHeader}>
             <Settings size={14} color="var(--color-cyan)" />
             <span style={styles.ledTitle}>LED_DECK_BACKLIGHT_CONTROL</span>
@@ -364,7 +364,7 @@ export default function Skills() {
             border: `1px solid ${getGlowColor('rgba(45, 212, 191, 0.25)')} !important`,
             boxShadow: `0 0 20px ${getGlowColor('rgba(45, 212, 191, 0.05)')} !important`,
           }}
-          className="glass-panel neon-hud-screen"
+          className="glass-panel neon-hud-screen hud-screen"
         >
           <div style={styles.hudScreenHeader}>
             <div style={styles.hudDots}>
@@ -428,13 +428,13 @@ export default function Skills() {
             className="keyboard-deck"
           >
             {keyboardRows.map((row, rIdx) => (
-              <div key={rIdx} style={styles.keyboardRow}>
-                <div style={styles.rowLabelCol}>
+              <div key={rIdx} style={styles.keyboardRow} className="keyboard-row">
+                <div style={styles.rowLabelCol} className="rowLabelCol">
                   <row.icon size={14} color={getGlowColor(row.color)} style={{ marginRight: '6px' }} />
                   <span style={{ ...styles.rowLabelText, color: getGlowColor(row.color) }}>{row.title}</span>
                 </div>
                 
-                <div style={styles.keysList}>
+                <div style={styles.keysList} className="keysList">
                   {row.skills.map((skillName) => {
                     const isClicked = clickedKey === skillName;
                     const isHovered = activeSkill?.name === skillName;
@@ -735,30 +735,41 @@ if (typeof document !== 'undefined') {
       transform: rotateX(23deg) rotateY(-1deg);
     }
     @media (max-width: 900px) {
+      .led-toolbar {
+        padding: 10px 14px !important;
+        justify-content: center !important;
+        gap: 12px !important;
+      }
+      .hud-screen {
+        padding: 16px !important;
+      }
       .keyboard-deck {
         transform: rotateX(0deg) rotateY(0deg) !important;
-        padding: 20px;
+        padding: 16px !important;
       }
       .keyboard-deck:hover {
         transform: rotateX(0deg) rotateY(0deg) !important;
       }
       .keyboard-row {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 12px;
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 12px !important;
       }
       .rowLabelCol {
-        width: 100%;
-        border-right: none;
-        border-bottom: 1px solid rgba(255,255,255,0.05);
-        padding-bottom: 6px;
+        width: 100% !important;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255,255,255,0.05) !important;
+        padding-bottom: 6px !important;
       }
       .keysList {
-        width: 100%;
+        width: 100% !important;
+        gap: 8px !important;
       }
       .keyboard-keycap {
         transform: none !important;
         border-bottom: 2px solid #0d0f18 !important;
+        padding: 8px 12px !important;
+        font-size: 10px !important;
       }
       .keyboard-keycap:hover {
         transform: none !important;
