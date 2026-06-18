@@ -13,10 +13,15 @@ import {
   Eye
 } from 'lucide-react';
 
-import profileImg from '../assets/profile.png';
+
 import lmsImg from '../assets/lms_preview.png';
 import threatImg from '../assets/threat_preview.png';
 import roadImg from '../assets/road_preview.png';
+import spitImg from '../assets/spit.jpg';
+import gcpEngineerImg from '../assets/gcp_engineer.png';
+import gcpAnalystImg from '../assets/gcp_analyst.png';
+import awsCertsImg from '../assets/aws_certs.png';
+import rgitImg from '../assets/rgit_college.png';
 
 const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   <svg 
@@ -35,6 +40,29 @@ const GithubIcon = (props: React.SVGProps<SVGSVGElement>) => (
   </svg>
 );
 
+const LinkedinIcon = (props: React.SVGProps<SVGSVGElement>) => (
+  <svg 
+    viewBox="0 0 24 24" 
+    width="14" 
+    height="14" 
+    stroke="currentColor" 
+    strokeWidth="2" 
+    fill="none" 
+    strokeLinecap="round" 
+    strokeLinejoin="round" 
+    {...props}
+  >
+    <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
+    <rect x="2" y="9" width="4" height="12" />
+    <circle cx="4" cy="4" r="2" />
+  </svg>
+);
+
+interface TimelineLink {
+  label: string;
+  url: string;
+}
+
 interface TimelineItemData {
   id: string;
   type: 'project' | 'education' | 'certification';
@@ -45,6 +73,7 @@ interface TimelineItemData {
   skills: string[];
   image?: string;
   github?: string;
+  links?: TimelineLink[];
   icon: React.ComponentType<any>;
   accentColor: string;
 }
@@ -63,6 +92,10 @@ export default function JourneyTimeline() {
       subtitle: 'Google Cloud Platform (GCP) Certification',
       description: 'Acquired core competencies in deploying and monitoring cloud-native web applications, managing VPC networks, and configuring GKE clusters and IAM access control.',
       skills: ['GCP', 'GKE', 'VPC Routing', 'Cloud Storage', 'IAM Roles'],
+      image: gcpEngineerImg,
+      links: [
+        { label: 'Cloud Engineer Certificate', url: 'https://green-devora-35.tiiny.site/' }
+      ],
       icon: CloudLightning,
       accentColor: 'var(--color-purple)'
     },
@@ -87,6 +120,10 @@ export default function JourneyTimeline() {
       subtitle: 'Google Cloud Platform (GCP) Certification',
       description: 'Mastered data analytics workflows including querying petabyte-scale datasets in BigQuery, orchestrating pipelines via Dataflow, and building data intelligence dashboards in Looker.',
       skills: ['BigQuery', 'SQL Analytics', 'Looker', 'Dataflow', 'Dataproc'],
+      image: gcpAnalystImg,
+      links: [
+        { label: 'Data Analyst Certificate', url: 'https://tan-kira-56.tiiny.site/' }
+      ],
       icon: Database,
       accentColor: 'var(--color-purple)'
     },
@@ -98,6 +135,7 @@ export default function JourneyTimeline() {
       subtitle: 'MCT Rajiv Gandhi Institute of Technology',
       description: 'Graduated with a CGPA of 8.82/10. Formed a rigorous foundation in algorithms design, database management systems, networking, and software engineering methodologies.',
       skills: ['Data Structures', 'Database Systems', 'Network Routing', 'Software Engineering'],
+      image: rgitImg,
       icon: BookOpen,
       accentColor: 'var(--color-teal)'
     },
@@ -122,6 +160,12 @@ export default function JourneyTimeline() {
       subtitle: 'Amazon Web Services (AWS) Credentials',
       description: 'Successfully obtained multiple AWS badges validating architectural proficiency: Cloud CI/CD Pipelines (CodePipeline, CodeBuild), Cloud Architecture best practices, and Cloud Foundations.',
       skills: ['AWS CodePipeline', 'AWS EC2/RDS', 'CloudFormation', 'Serverless'],
+      image: awsCertsImg,
+      links: [
+        { label: 'Cloud CI/CD Pipelines', url: 'https://drive.google.com/file/d/1oqdXS_ri7kDa4UONqqGmLAUia6D-bj_R/view?usp=sharing' },
+        { label: 'Cloud Architecture', url: 'https://drive.google.com/file/d/1oqdXS_ri7kDa4UONqqGmLAUia6D-bj_R/view' },
+        { label: 'Cloud Foundation', url: 'https://drive.google.com/file/d/1HFKvyl5IE1_3rE0RvY5jkWEpKf7a3TJq/view' }
+      ],
       icon: Server,
       accentColor: 'var(--color-teal)'
     },
@@ -146,6 +190,7 @@ export default function JourneyTimeline() {
       subtitle: 'Sardar Patel Institute of Technology (SPIT)',
       description: 'Pursuing M.Tech degree with a current CGPA of 9.55/10. Specialized in advanced deep learning architectures, cloud computing platforms, and distributed microservices architectures.',
       skills: ['Deep Learning', 'Distributed Architectures', 'Cloud Infrastructures', 'Research Seminars'],
+      image: spitImg,
       icon: GraduationCap,
       accentColor: 'var(--color-cyan)'
     }
@@ -231,30 +276,48 @@ export default function JourneyTimeline() {
         className="glass-panel profile-hud-card"
       >
         <div style={styles.profileLayout}>
-          <div style={styles.imageCol}>
-            <div style={styles.profileImageContainer}>
-              <img 
-                src={profileImg} 
-                alt="Nameet Ahire" 
-                style={styles.profileImg} 
-              />
-              <div style={styles.profileImgScanner} className="scanner-line"></div>
-            </div>
-            <div style={styles.statusIndicator}>
-              <span className="pulse-dot"></span>
-              <span style={styles.statusText}>PILOT_STATUS: READY_TO_DEPLOY</span>
-            </div>
-          </div>
-          
           <div style={styles.profileInfoCol}>
-            <h3 style={styles.profileName}>NAMEET AHIRE</h3>
-            <h4 style={styles.profileTitle} className="text-gradient-cyan-purple">
-              SYSTEM ARCHITECT & AI RESEARCHER
-            </h4>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: '16px', marginBottom: '8px' }}>
+              <div>
+                <h3 style={{ ...styles.profileName, margin: 0 }}>NAMEET AHIRE</h3>
+                <h4 style={{ ...styles.profileTitle, margin: '4px 0 0 0' }} className="text-gradient-cyan-purple">
+                  SYSTEM ARCHITECT & AI RESEARCHER
+                </h4>
+              </div>
+              <div style={styles.statusIndicator}>
+                <span className="pulse-dot"></span>
+                <span style={styles.statusText}>PILOT_STATUS: READY_TO_DEPLOY</span>
+              </div>
+            </div>
             
             <p style={styles.profileBio}>
               Highly analytical Computer Engineering graduate student combining AI/ML vision pipelines with secure, containerized cloud infrastructure. Experienced in building responsive full-stack dashboards, deploying deep learning models, and configuring automated CI/CD pipelines.
             </p>
+
+            <div style={styles.profileSocialRow}>
+              <a 
+                href="https://github.com/NameetAhire" 
+                target="_blank" 
+                rel="noreferrer" 
+                style={styles.profileSocialBtn}
+                className="profile-social-btn"
+                title="GitHub Profile"
+              >
+                <GithubIcon style={{ marginRight: '6px' }} />
+                GITHUB
+              </a>
+              <a 
+                href="https://linkedin.com/in/nameet-ahire" 
+                target="_blank" 
+                rel="noreferrer" 
+                style={styles.profileSocialBtn}
+                className="profile-social-btn"
+                title="LinkedIn Profile"
+              >
+                <LinkedinIcon style={{ marginRight: '6px' }} />
+                LINKEDIN
+              </a>
+            </div>
 
             <div style={styles.statsRow}>
               <div style={styles.statItem}>
@@ -322,7 +385,7 @@ export default function JourneyTimeline() {
                         style={styles.cardImg} 
                       />
                       <div style={styles.imgOverlay}>
-                        {item.github && (
+                        {item.github ? (
                           <a 
                             href={item.github} 
                             target="_blank" 
@@ -333,7 +396,18 @@ export default function JourneyTimeline() {
                             <Eye size={14} style={{ marginRight: '6px' }} />
                             PREVIEW_CODE
                           </a>
-                        )}
+                        ) : (item.links && item.links.length > 0) ? (
+                          <a 
+                            href={item.links[0].url} 
+                            target="_blank" 
+                            rel="noreferrer" 
+                            style={styles.viewCodeBtn}
+                            className="view-code-btn"
+                          >
+                            <Eye size={14} style={{ marginRight: '6px' }} />
+                            VIEW_CREDENTIAL
+                          </a>
+                        ) : null}
                       </div>
                     </div>
                   )}
@@ -356,19 +430,34 @@ export default function JourneyTimeline() {
                     ))}
                   </div>
 
-                  {item.github && (
+                  {(item.github || (item.links && item.links.length > 0)) && (
                     <div style={styles.cardActionRow}>
-                      <a 
-                        href={item.github} 
-                        target="_blank" 
-                        rel="noreferrer" 
-                        style={styles.githubLink}
-                        className="timeline-github-link"
-                      >
-                        <GithubIcon style={{ marginRight: '6px' }} />
-                        GitHub Repository
-                        <ExternalLink size={12} style={{ marginLeft: '6px' }} />
-                      </a>
+                      {item.github && (
+                        <a 
+                          href={item.github} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          style={styles.githubLink}
+                          className="timeline-github-link"
+                        >
+                          <GithubIcon style={{ marginRight: '6px' }} />
+                          GitHub Repository
+                          <ExternalLink size={12} style={{ marginLeft: '6px' }} />
+                        </a>
+                      )}
+                      {item.links && item.links.map((lnk, lIdx) => (
+                        <a 
+                          key={lIdx}
+                          href={lnk.url} 
+                          target="_blank" 
+                          rel="noreferrer" 
+                          style={styles.customLinkBtn}
+                          className="timeline-custom-link"
+                        >
+                          <ExternalLink size={12} style={{ marginRight: '6px' }} />
+                          {lnk.label}
+                        </a>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -663,6 +752,42 @@ const styles = {
   cardActionRow: {
     display: 'flex',
     marginTop: '4px',
+    gap: '12px',
+    flexWrap: 'wrap' as const,
+    alignItems: 'center',
+  },
+  customLinkBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    fontSize: '11px',
+    fontWeight: 600,
+    fontFamily: 'var(--font-display)',
+    color: 'var(--color-cyan)',
+    textDecoration: 'none',
+    transition: 'all 0.25s ease',
+    padding: '4px 10px',
+    borderRadius: '4px',
+    border: '1px solid rgba(34, 211, 238, 0.2)',
+    background: 'rgba(34, 211, 238, 0.02)',
+  },
+  profileSocialRow: {
+    display: 'flex',
+    gap: '12px',
+    marginTop: '6px',
+  },
+  profileSocialBtn: {
+    display: 'inline-flex',
+    alignItems: 'center',
+    fontSize: '11px',
+    fontWeight: 600,
+    fontFamily: 'var(--font-display)',
+    color: 'var(--color-text-secondary)',
+    textDecoration: 'none',
+    transition: 'all 0.25s ease',
+    padding: '6px 14px',
+    borderRadius: '20px',
+    border: '1px solid var(--border-glass)',
+    backgroundColor: 'rgba(255, 255, 255, 0.02)',
   },
   githubLink: {
     display: 'inline-flex',
@@ -759,6 +884,18 @@ if (typeof document !== 'undefined') {
     }
     .timeline-github-link:hover {
       color: var(--color-cyan) !important;
+    }
+    .profile-social-btn:hover {
+      color: var(--color-cyan) !important;
+      border-color: var(--color-cyan) !important;
+      box-shadow: 0 0 10px var(--color-cyan-glow);
+      transform: translateY(-2px);
+    }
+    .timeline-custom-link:hover {
+      color: var(--bg-deep) !important;
+      background-color: var(--color-cyan) !important;
+      border-color: var(--color-cyan) !important;
+      box-shadow: 0 0 10px var(--color-cyan-glow);
     }
     .timeline-skill-tag:hover {
       background-color: rgba(255, 255, 255, 0.06) !important;

@@ -20,13 +20,17 @@ export default function InteractiveCore3D() {
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     mountRef.current.appendChild(renderer.domElement);
 
+    const isDark = document.documentElement.getAttribute('data-theme') !== 'light';
+    const coreColor = isDark ? 0x22d3ee : 0x0891b2;
+    const ringColors = isDark ? [0xc084fc, 0x2dd4bf, 0x22d3ee] : [0x7c3aed, 0x0d9488, 0x0891b2]; // Purple, Teal, Cyan
+
     // 1. Create Glowing Center Sphere
     const coreGeometry = new THREE.SphereGeometry(1.2, 32, 32);
     const coreMaterial = new THREE.MeshBasicMaterial({
-      color: 0x22d3ee,
+      color: coreColor,
       wireframe: true,
       transparent: true,
-      opacity: 0.65,
+      opacity: isDark ? 0.65 : 0.8,
     });
     const coreMesh = new THREE.Mesh(coreGeometry, coreMaterial);
     scene.add(coreMesh);
@@ -34,10 +38,10 @@ export default function InteractiveCore3D() {
     // Outer glow ring
     const coreGlowGeo = new THREE.RingGeometry(1.4, 1.45, 64);
     const coreGlowMat = new THREE.MeshBasicMaterial({
-      color: 0x22d3ee,
+      color: coreColor,
       side: THREE.DoubleSide,
       transparent: true,
-      opacity: 0.3,
+      opacity: isDark ? 0.3 : 0.45,
     });
     const coreGlowMesh = new THREE.Mesh(coreGlowGeo, coreGlowMat);
     scene.add(coreGlowMesh);
@@ -45,7 +49,6 @@ export default function InteractiveCore3D() {
     // 2. Create Three Orbital Rings (AI/ML, Cloud, Security)
     const ringCount = 3;
     const ringGroups: THREE.Group[] = [];
-    const ringColors = [0xc084fc, 0x2dd4bf, 0x22d3ee]; // Purple, Teal, Cyan
     const ringNames = ['AI/ML_PIPELINE', 'CLOUD_DEVOPS_NEST', 'CYBER_SECURITY_CORE'];
     const ringRadius = [2.2, 3.2, 4.2];
 
@@ -68,7 +71,7 @@ export default function InteractiveCore3D() {
       const ringMaterial = new THREE.LineBasicMaterial({
         color: ringColors[r],
         transparent: true,
-        opacity: 0.35,
+        opacity: isDark ? 0.35 : 0.5,
       });
       const ringLine = new THREE.Line(ringGeometry, ringMaterial);
       ringGroup.add(ringLine);
@@ -109,7 +112,7 @@ export default function InteractiveCore3D() {
         size: 0.3,
         map: createDotTexture(ringColors[r]),
         transparent: true,
-        blending: THREE.AdditiveBlending,
+        blending: isDark ? THREE.AdditiveBlending : THREE.NormalBlending,
         depthWrite: false,
       });
       const points = new THREE.Points(particlesGeometry, pMaterial);

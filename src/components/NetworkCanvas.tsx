@@ -107,61 +107,7 @@ export default function NetworkCanvas({ theme = 'dark' }: Props) {
     const starField = new THREE.LineSegments(starGeo, starMat);
     scene.add(starField);
 
-    // 5. ── FLOATING INTERACTIVE 3D GEOMETRY ──────────────────────────────────
-    const floatingObjects: {
-      mesh: THREE.Mesh;
-      rotX: number; rotY: number; rotZ: number;
-      floatPhase: number; floatSpeed: number;
-      originalY: number; targetScale: number; currentScale: number;
-    }[] = [];
-
-    const geomTypes = [
-      new THREE.IcosahedronGeometry(12, 1),
-      new THREE.OctahedronGeometry(10, 0),
-      new THREE.TetrahedronGeometry(9, 0),
-      new THREE.IcosahedronGeometry(7, 0),
-      new THREE.OctahedronGeometry(13, 0),
-      new THREE.TetrahedronGeometry(11, 0),
-    ];
-
-    const meshPositions = isMobile ? [
-      [-220, 80, -300], [220, -60, -350],
-    ] : [
-      [-320, 100, -350], [300, -80, -380],
-      [-200, -130, -420], [250, 120, -300],
-      [-380, -40, -480], [360, 60, -450],
-    ];
-
-    meshPositions.forEach((pos, i) => {
-      const geom = geomTypes[i % geomTypes.length];
-      const hue = [0.55, 0.78, 0.47][i % 3]; // cyan, purple, teal
-      const mat = new THREE.MeshBasicMaterial({
-        color: new THREE.Color().setHSL(hue, 0.9, 0.6),
-        wireframe: true,
-        transparent: true,
-        opacity: theme === 'dark' ? 0.18 : 0.22,
-        blending: THREE.AdditiveBlending,
-      });
-
-      const mesh = new THREE.Mesh(geom, mat);
-      mesh.position.set(pos[0], pos[1], pos[2]);
-      mesh.userData.originalY = pos[1];
-      scene.add(mesh);
-
-      floatingObjects.push({
-        mesh,
-        rotX: (Math.random() - 0.5) * 0.006,
-        rotY: (Math.random() - 0.5) * 0.008,
-        rotZ: (Math.random() - 0.5) * 0.004,
-        floatPhase: Math.random() * Math.PI * 2,
-        floatSpeed: 0.4 + Math.random() * 0.6,
-        originalY: pos[1],
-        targetScale: 1,
-        currentScale: 1,
-      });
-    });
-
-    // 6. Radar Ring (home page overlay)
+    // 5. Radar Ring (home page overlay)
     const radarGeo = new THREE.RingGeometry(90, 91.5, 64);
     const radarMat = new THREE.MeshBasicMaterial({
       color: 0x22d3ee, side: THREE.DoubleSide,
@@ -171,35 +117,13 @@ export default function NetworkCanvas({ theme = 'dark' }: Props) {
     radar.position.set(0, 0, -180);
     scene.add(radar);
 
-    // 7. Mouse / Touch interactivity
+    // 6. Mouse / Touch interactivity
     const mouse = new THREE.Vector2(0, 0);
     const targetMouse = new THREE.Vector2(0, 0);
-    const raycaster = new THREE.Raycaster();
-    let hoveredObj: THREE.Mesh | null = null;
 
     const handleMouseMove = (e: MouseEvent) => {
       targetMouse.x = (e.clientX / window.innerWidth) * 2 - 1;
       targetMouse.y = -(e.clientY / window.innerHeight) * 2 + 1;
-    };
-
-    const handleMouseClick = (e: MouseEvent) => {
-      raycaster.setFromCamera(
-        new THREE.Vector2(
-          (e.clientX / window.innerWidth) * 2 - 1,
-          -(e.clientY / window.innerHeight) * 2 + 1
-        ),
-        camera
-      );
-      const meshes = floatingObjects.map(o => o.mesh);
-      const hits = raycaster.intersectObjects(meshes);
-      if (hits.length > 0) {
-        const obj = floatingObjects.find(o => o.mesh === hits[0].object);
-        if (obj) {
-          // Pop animation on click
-          obj.targetScale = 1.6;
-          setTimeout(() => { obj.targetScale = 1; }, 300);
-        }
-      }
     };
 
     const handleTouchMove = (e: TouchEvent) => {
@@ -211,7 +135,6 @@ export default function NetworkCanvas({ theme = 'dark' }: Props) {
     };
 
     window.addEventListener('mousemove', handleMouseMove);
-    window.addEventListener('click', handleMouseClick);
     window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     // Scroll velocity
@@ -296,42 +219,6 @@ export default function NetworkCanvas({ theme = 'dark' }: Props) {
       starField.geometry.attributes.position.needsUpdate = true;
       starField.rotation.z += 0.0003;
 
-      // Animate floating 3D geometry
-      // Hover detection
-      raycaster.setFromCamera(mouse, camera);
-      const allMeshes = floatingObjects.map(o => o.mesh);
-      const hits = raycaster.intersectObjects(allMeshes);
-      hoveredObj = hits.length > 0 ? hits[0].object as THREE.Mesh : null;
-
-      floatingObjects.forEach(obj => {
-        // Rotation
-        obj.mesh.rotation.x += obj.rotX;
-        obj.mesh.rotation.y += obj.rotY;
-        obj.mesh.rotation.z += obj.rotZ;
-
-        // Float up/down
-        const floatY = Math.sin(time * obj.floatSpeed + obj.floatPhase) * 18;
-        obj.mesh.position.y += (obj.originalY + floatY - obj.mesh.position.y) * 0.04;
-
-        // Hover glow / scale
-        const isHovered = obj.mesh === hoveredObj;
-        if (isHovered) obj.targetScale = 1.3;
-        else if (obj.currentScale > 1 && !isHovered) obj.targetScale = 1;
-
-        obj.currentScale += (obj.targetScale - obj.currentScale) * 0.08;
-        obj.mesh.scale.setScalar(obj.currentScale);
-
-        // Opacity based on theme
-        const mat = obj.mesh.material as THREE.MeshBasicMaterial;
-        const targetOp = isHovered ? 0.5 : (isDark ? 0.15 : 0.2);
-        mat.opacity += (targetOp - mat.opacity) * 0.06;
-
-        // Color shift on hover
-        if (isHovered) {
-          mat.color.lerp(new THREE.Color(isDark ? 0xffffff : 0x0f1033), 0.1);
-        }
-      });
-
       // Global opacity of starfield based on light/dark
       starMat.opacity = isDark ? 0.8 : 0.45;
 
@@ -351,12 +238,11 @@ export default function NetworkCanvas({ theme = 'dark' }: Props) {
     };
     window.addEventListener('resize', handleResize);
 
-    // 10. Cleanup
+    // 7. Cleanup
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('resize', handleResize);
       window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('click', handleMouseClick);
       window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('scroll', handleScroll);
       if (container && renderer.domElement.parentNode === container) {
