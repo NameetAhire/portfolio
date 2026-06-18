@@ -1,73 +1,42 @@
-# React + TypeScript + Vite
+# Nameet Ahire | Personal Portfolio Website
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🚀 **Live Site:** [https://nameetahire.vercel.app/](https://nameetahire.vercel.app/)
 
-Currently, two official plugins are available:
+Welcome to my personal portfolio repository! I am an **AI/ML Engineer & Cloud DevOps Architect** currently pursuing my M.Tech in Computer Engineering at Sardar Patel Institute of Technology (SPIT).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+This interactive website showcases my projects, technical skills, academic journey, and certifications.
 
-## React Compiler
+---
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠️ Tech Stack & Features
 
-## Expanding the ESLint configuration
+- **Framework**: React 19 + TypeScript + Vite
+- **3D Graphics**: Interactive Three.js particle systems and network graphs
+- **Icons & Theme**: Lucide React, clean modern dark mode styling
+- **Animations**: Custom smooth physics-based and micro-interactive canvas experiences
+- **Contact Integration**: Connected to Web3Forms for secure, direct email messaging
+- **Hosting**: Deployed and continuously integrated via Vercel
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 📂 Project Highlights
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+1. **Cloud-Native LMS** (React, Node.js, Docker, AWS): Fully containerized learning management system.
+2. **YOLO v8 Video Incident Tracker** (Python, PyTorch, YOLOv8): Deep learning pipeline for real-time security tracking.
+3. **Dark Web Threat Intelligence Engine** (Go, Python, NLP): Advanced crawler scraping and classification engine for onion sites.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+---
+
+## 🚀 Local Development
+
+To run this project locally, clone the repository and run:
+
+```bash
+# Install dependencies
+npm install
+
+# Run the local development server
+npm run dev
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+The site will be available locally at `http://localhost:5173`.
